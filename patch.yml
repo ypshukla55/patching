@@ -1,0 +1,22 @@
+---
+
+- hosts: all
+  become: yes
+
+  tasks:
+  - name: Patching servers (RHEL/CentOS)
+    yum:
+      name: '*'
+      state: latest
+    when: ansible_facts['distribution'] == "RedHat" or ansible_facts['distribution'] == "CentOS"
+  
+  - name: Patching servers (Ubuntu)
+    apt:
+      upgrade: dist
+      force_apt_get: yes
+    when: ansible_facts['distribution'] == "Ubuntu"
+
+  - name: Reboot server
+    ansible.builtin.reboot:
+      reboot_timeout: 3600
+      test_command: uptime
